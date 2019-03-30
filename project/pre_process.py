@@ -32,9 +32,18 @@ class Preprocess:
         return data
 
     @staticmethod
-    def prepare(data_set: pnd.DataFrame, test_size: float=0.2):
+    def prepare_sets(data_set: pnd.DataFrame, test_size: float=0.2):
         # remove time
         data = data_set.drop("Time [s]", axis=1)
         cut = int(len(data.index) * (1. - test_size))
         training_set, test_set = data[:cut], data[cut:]
         return training_set, test_set
+
+    @staticmethod
+    def make_input_output(data_set: pnd.DataFrame):
+        """splits a data frame into X and y"""
+        # split into input and outputs
+        train_X, train_y = data_set.values[:, 1:-1], data_set.values[:, -1]
+        # reshape input to be 3D [samples, timesteps, features]
+        train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
+        return train_X, train_y
