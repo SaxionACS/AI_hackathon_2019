@@ -67,22 +67,20 @@ class TextUI:
                     else:
                         all_X, all_y = pp.make_input_output(data.drop("Time [s]", axis=1),
                                                             remove_resp_from_input=True)
-                        predict_y = model.predict(all_X, batch_size=64)
-                        min_ = scaler.min_[1]
-                        scale_ = scaler.scale_[1]
+                        predict_y = model.predict(all_X, batch_size=640)
+                        # min_ = scaler.min_[1]
+                        # scale_ = scaler.scale_[1]
 
-                        predict_y = (predict_y - min_) / scale_
+                        # predict_y = (predict_y - min_) / scale_
                         predicted = pnd.DataFrame({"RESP_PREDICTED": predict_y.flatten()})
 
                         fused = pnd.concat([data, predicted], axis=1)
                         self.dr.plot(fused)
+                        self.dr.plot_detail(fused)
                 else:
                     continue
             else:
                 break
-
-
-
 
 if __name__ == "__main__":
     ui = TextUI()

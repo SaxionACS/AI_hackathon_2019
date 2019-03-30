@@ -28,9 +28,9 @@ class RespRatePredictor:
 
 
     @staticmethod
-    def fit_network(model, train_X, train_y, test_X, test_y, batch_size: int = 64):
+    def fit_network(model, train_X, train_y, test_X, test_y, batch_size: int = 640):
 
-        history = model.fit(train_X, train_y, epochs=1, batch_size=batch_size, validation_data=(test_X, test_y), verbose=1,
+        history = model.fit(train_X, train_y, epochs=10, batch_size=batch_size, validation_data=(test_X, test_y), verbose=1,
                         shuffle=False)
         # plot history
         plt.plot(history.history['loss'], label='train')
@@ -44,7 +44,7 @@ class RespRatePredictor:
         return np.convolve(x, np.ones(w), 'valid') / w
 
     @staticmethod
-    def plot_test(model, test_X, test_y, scaler, batch_size: int = 64):
+    def plot_test(model, test_X, test_y, scaler, batch_size: int = 640):
         predict_y = model.predict(test_X, batch_size=batch_size)
         min_ = scaler.min_[1]
         scale_ = scaler.scale_[1]
@@ -71,7 +71,7 @@ class RespRatePredictor:
         plt.show()
 
     @staticmethod
-    def plot_test_more(model, test_X, test_y, scaler, batch_size: int = 64):
+    def plot_test_more(model, test_X, test_y, scaler, batch_size: int = 640):
         predict_y = model.predict(test_X, batch_size=batch_size)
         min_ = scaler.min_[1]
         scale_ = scaler.scale_[1]
