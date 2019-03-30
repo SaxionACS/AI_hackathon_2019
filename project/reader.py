@@ -24,11 +24,6 @@ class DataReader:
             return data
 
 
-
-
-
-
-
     def plot(self, data_set: pnd.DataFrame):
         fig, axs = plt.subplots(figsize=[12, 15], nrows=5)
         sns.set_context("talk", font_scale=1.0)

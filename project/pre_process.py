@@ -40,10 +40,16 @@ class Preprocess:
         return training_set, test_set
 
     @staticmethod
-    def make_input_output(data_set: pnd.DataFrame):
+    def make_input_output(data_set: pnd.DataFrame, remove_resp_from_input: bool = True):
         """splits a data frame into X and y"""
         # split into input and outputs
-        train_X, train_y = data_set.values[:, 1:-1], data_set.values[:, -1]
+        if remove_resp_from_input:
+            train_X, train_y = data_set.values[:, 1:-1], data_set.values[:, -1]
+        else:
+            train_X, train_y = data_set.values[:, :-1], data_set.values[:, -1]
+
         # reshape input to be 3D [samples, timesteps, features]
         train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
+
+        print(train_X.shape, train_y.shape)
         return train_X, train_y

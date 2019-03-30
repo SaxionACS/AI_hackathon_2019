@@ -1,8 +1,6 @@
 from reader import DataReader
 from pre_process import Preprocess
-
-from tensorflow.python.keras import Sequential
-from tensorflow.python.keras.layers import Dense, Activation
+from resp_predictor import RespRatePredictor
 
 
 
@@ -17,8 +15,14 @@ if __name__ == "__main__":
     data = pp.convert_to_supervised(data, sample_shift=10)
     train, test = pp.prepare_sets(data, 0.2)
     print(train.head(10))
-    train_X, train_y = pp.make_input_output(data)
+    train_X, train_y = pp.make_input_output(train, remove_resp_from_input=False)
+    test_X, test_y = pp.make_input_output(test, remove_resp_from_input=False)
 
-    print(train_X[:10])
-    print(train_y[:10])
-    # dr.convert_to_supervised(data, 10, True)
+    print(train_X[:10, :])
+
+
+    model = RespRatePredictor()
+    #
+    network = model.make_network(count_hidden=1, input_shape=(train_X.shape[1], train_X.shape[2]))
+    #
+    model.fit_network(network, train_X, train_y, test_X, test_y)
