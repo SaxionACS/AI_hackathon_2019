@@ -10,5 +10,7 @@ if __name__ == "__main__":
 
 
     dr = DataReader()
-    data = dr.read_set(35)
-    dr.convert_to_supervised(data, 10, True)
+    data = dr.read_set(25)
+    dr.plot(data)
+    dr.plot(dr.clean_up(data))
+    # dr.convert_to_supervised(data, 10, True)

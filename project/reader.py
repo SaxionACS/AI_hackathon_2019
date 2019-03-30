@@ -2,6 +2,9 @@ import pandas as pnd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from sklearn.preprocessing import MinMaxScaler
+
+
 
 class DataReader:
     @staticmethod
@@ -22,7 +25,7 @@ class DataReader:
             return data
 
     @staticmethod
-    def convert_to_supervised(data_set: pnd.DataFrame, sample_shift: int = 10, drop_nan: bool = True):
+    def convert_to_supervised(data_set: pnd.DataFrame, sample_shift: int = 10, drop_nan: bool = True) -> pnd.DataFrame:
         """Adds a column shifted by sample_shift samples"""
         data = pnd.DataFrame(data_set)
         data["Y"] = data_set["RESP"].shift(sample_shift)
@@ -30,6 +33,20 @@ class DataReader:
             # remove NaN
             data.dropna(inplace=True)
         return data
+
+    @staticmethod
+    def clean_up(data_set: pnd.DataFrame) -> pnd.DataFrame:
+        # remove NaN
+        data = data_set.dropna()
+        min_max_scaler = MinMaxScaler()
+        data = pnd.DataFrame(min_max_scaler.fit_transform(data.values), columns=data.columns, index=data.index)
+        if len(data.index) == len(data_set.index):
+            data["Time [s]"] = data_set["Time [s]"]
+        else:
+            temp = data_set.dropna()
+            data["Time [s]"] = temp["Time [s]"]
+        return data
+
 
 
     def plot(self, data_set: pnd.DataFrame):
