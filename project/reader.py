@@ -21,6 +21,17 @@ class DataReader:
             data.columns = [col.strip() for col in data.columns]
             return data
 
+    @staticmethod
+    def convert_to_supervised(data_set: pnd.DataFrame, sample_shift: int = 10, drop_nan: bool = True):
+        """Adds a column shifted by sample_shift samples"""
+        data = pnd.DataFrame(data_set)
+        data["Y"] = data_set["RESP"].shift(sample_shift)
+        if drop_nan:
+            # remove NaN
+            data.dropna(inplace=True)
+        return data
+
+
     def plot(self, data_set: pnd.DataFrame):
         fig, axs = plt.subplots(figsize=[12, 15], nrows=5)
         sns.set_context("talk", font_scale=1.0)

@@ -11,4 +11,4 @@ if __name__ == "__main__":
 
     dr = DataReader()
     data = dr.read_set(35)
-    dr.plot(data)
+    dr.convert_to_supervised(data, 10, True)
