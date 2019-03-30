@@ -30,13 +30,22 @@ class Preprocess:
             # remove NaN
             data.dropna(inplace=True)
         data = data.drop("II", axis=1)
+        if "ABP" in data.columns:
+            data = data.drop("ABP", axis=1)
+        if "CVP" in data.columns:
+            data = data.drop("CVP", axis=1)
+        if "ART" in data.columns:
+            data = data.drop("ART", axis=1)
         return data
+
 
     @staticmethod
     def prepare_sets(data_set: pnd.DataFrame, test_size: float=0.2):
         # remove time
         data = data_set.drop("Time [s]", axis=1)
         cut = int(len(data.index) * (1. - test_size))
+
+
         training_set, test_set = data[:cut], data[cut:]
         return training_set, test_set
 

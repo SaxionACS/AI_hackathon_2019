@@ -29,7 +29,7 @@ class DataReader:
         sns.set_context("talk", font_scale=1.0)
         sns.despine()
         print(data_set.columns.to_list())
-        sliced = data_set[0:7500:5]
+        sliced = data_set[48000:51000:5]
         sns.relplot(x='Time [s]', y='RESP', data=sliced, ax=axs[0], kind="line")
         sns.relplot(x='Time [s]', y='PLETH', data=sliced, ax=axs[1], kind="line")
         sns.relplot(x='Time [s]', y='II', data=sliced, ax=axs[2], kind="line")
