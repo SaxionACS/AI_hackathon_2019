@@ -1,15 +1,26 @@
 from tensorflow.python.keras import Sequential
-from tensorflow.python.keras.layers import Dense, Activation, LSTM
+from tensorflow.python.keras.layers import Dense, Activation, LSTM, Dropout
+import tensorflow.python.keras.regularizers as regularizers
+import seaborn as sns
+
+import numpy as np
 
 import matplotlib.pyplot as plt
 
 class RespRatePredictor:
     @staticmethod
-    def make_network(count_hidden: int = 0, input_shape=()):
+    def make_network(input_shape=()):
         model = Sequential()
-        model.add(LSTM(100, input_shape=input_shape))
-        for _ in range(count_hidden):
-            model.add(Dense(50))
+        model.add(LSTM(50, activation="tanh",
+                       input_shape=input_shape,
+                       return_sequences=True))
+        model.add(Dropout(0.2))
+        model.add(LSTM(50, input_shape=input_shape, activation="relu"))
+        model.add(Dropout(0.2))
+
+        # kernel_regularizer = regularizers.l2(0.01)
+
+        model.add(Dense(25))
         model.add(Dense(1))
         model.compile(loss='mae', optimizer='adam')
         return model
@@ -18,28 +29,40 @@ class RespRatePredictor:
     @staticmethod
     def fit_network(model, train_X, train_y, test_X, test_y):
 
-        history = model.fit(train_X, train_y, epochs=50, batch_size=72, validation_data=(test_X, test_y), verbose=2,
+        history = model.fit(train_X, train_y, epochs=3, batch_size=64, validation_data=(test_X, test_y), verbose=2,
                         shuffle=False)
         # plot history
         plt.plot(history.history['loss'], label='train')
         plt.plot(history.history['val_loss'], label='test')
         plt.legend()
         plt.show()
+        return model
 
 
-    # @staticmethod
-    # def plot_test(model, test_X):
-    #     yhat = model.predict(test_X)
-    #     test_X = test_X.reshape((test_X.shape[0], test_X.shape[2]))
-    #     # invert scaling for forecast
-    #     inv_yhat = concatenate((yhat, test_X[:, 1:]), axis=1)
-    #     inv_yhat = scaler.inverse_transform(inv_yhat)
-    #     inv_yhat = inv_yhat[:, 0]
-    #     # invert scaling for actual
-    #     test_y = test_y.reshape((len(test_y), 1))
-    #     inv_y = concatenate((test_y, test_X[:, 1:]), axis=1)
-    #     inv_y = scaler.inverse_transform(inv_y)
-    #     inv_y = inv_y[:, 0]
-    #     # calculate RMSE
-    #     rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-    #     print('Test RMSE: %.3f' % rmse)
+    @staticmethod
+    def plot_test(model, test_X, test_y, scaler):
+        predict_y = model.predict(test_X, batch_size=64)
+        min_ = scaler.min_[1]
+        scale_ = scaler.scale_[1]
+
+        predict_y = (predict_y - min_) / scale_
+        predict_y = predict_y.flatten()
+
+        test_y = (test_y - min_) / scale_
+        # fig, axs = plt.subplots(figsize=[12, 9], nrows=2)
+        # sns.set_context("talk", font_scale=1.0)
+        # sns.despine()
+
+        up_limit = 7500
+        freq = 125.
+        time = np.arange(0.0, up_limit/freq, 1.0/freq )
+        #
+        # print(predict_y)
+        # print(test_y)
+        # print(time)
+        plt.figure(1)
+        plt.subplot(211)
+        plt.plot(time, test_y[0:up_limit])
+        plt.subplot(212)
+        plt.plot(time, predict_y[0:up_limit])
+        plt.show()

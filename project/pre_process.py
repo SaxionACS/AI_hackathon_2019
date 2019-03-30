@@ -15,7 +15,7 @@ class Preprocess:
         else:
             temp = data_set.dropna()
             data["Time [s]"] = temp["Time [s]"]
-        return data
+        return data, min_max_scaler
 
     @staticmethod
     def resample(data_set: pnd.DataFrame, resample_interval: int = 1) -> pnd.DataFrame:
@@ -29,6 +29,7 @@ class Preprocess:
         if drop_nan:
             # remove NaN
             data.dropna(inplace=True)
+        data = data.drop("II", axis=1)
         return data
 
     @staticmethod
