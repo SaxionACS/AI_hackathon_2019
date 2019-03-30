@@ -17,6 +17,7 @@ class DataReader:
         II
         """
         file_name = "./data/" + "bidmc_{0:0>2}_Signals.csv".format(set_number)
+        print("Loading: {}".format(file_name))
         with open(file_name, "r") as fin:
             data = pnd.read_csv(fin)
             # print(data.head(10))
@@ -25,16 +26,28 @@ class DataReader:
 
 
     def plot(self, data_set: pnd.DataFrame):
-        fig, axs = plt.subplots(figsize=[12, 15], nrows=5)
+        if "RESP_PREDICTED" in data_set.columns.tolist():
+            nrows = 5
+        else:
+            nrows = 4
+
+        fig, axs = plt.subplots(figsize=[12, nrows*3], nrows=nrows)
         sns.set_context("talk", font_scale=1.0)
         sns.despine()
-        print(data_set.columns.to_list())
-        sliced = data_set[48000:51000:5]
-        sns.relplot(x='Time [s]', y='RESP', data=sliced, ax=axs[0], kind="line")
-        sns.relplot(x='Time [s]', y='PLETH', data=sliced, ax=axs[1], kind="line")
-        sns.relplot(x='Time [s]', y='II', data=sliced, ax=axs[2], kind="line")
-        sns.relplot(x='Time [s]', y='AVR', data=sliced, ax=axs[3], kind="line")
-        sns.relplot(x='Time [s]', y='V', data=sliced, ax=axs[4], kind="line")
+
+        sliced = data_set[:15000:5]
+        index = 0
+        sns.relplot(x='Time [s]', y='RESP', data=sliced, ax=axs[index], kind="line")
+        index += 1
+        if "RESP_PREDICTED" in data_set.columns.tolist():
+            sns.relplot(x='Time [s]', y='RESP_PREDICTED', data=sliced, ax=axs[index], kind="line",
+                        color="red")
+            index += 1
+        sns.relplot(x='Time [s]', y='PLETH', data=sliced, ax=axs[index], kind="line")
+        index += 1
+        sns.relplot(x='Time [s]', y='AVR', data=sliced, ax=axs[index], kind="line")
+        index += 1
+        sns.relplot(x='Time [s]', y='V', data=sliced, ax=axs[index], kind="line")
 
         plt.show()
 

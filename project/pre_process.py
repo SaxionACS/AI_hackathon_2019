@@ -61,5 +61,5 @@ class Preprocess:
         # reshape input to be 3D [samples, timesteps, features]
         train_X = train_X.reshape((train_X.shape[0], 1, train_X.shape[1]))
 
-        print(train_X.shape, train_y.shape)
+        # print(train_X.shape, train_y.shape)
         return train_X, train_y
